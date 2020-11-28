@@ -29,7 +29,7 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         BigDecimal currentBalance = customerAccount.get().getBalance();
 
-        transaction.setAccount(customerAccount.get());
+
         transaction.setAmount(transactionRequest.getAmount());
         transaction.setDate(new Date());
         transaction.setDescription(transactionRequest.getDescription());
@@ -40,6 +40,7 @@ public class TransactionService {
             if (newBalance.compareTo(BigDecimal.ZERO) >= 0) {
                 customerAccount.get().setBalance(newBalance);
                 transaction.setBalance(newBalance);
+                transaction.setAccount(customerAccount.get());
                 accountRepo.save(customerAccount.get());
                 transactionRepo.save(transaction);
 
@@ -51,6 +52,7 @@ public class TransactionService {
             BigDecimal newBalance = currentBalance.add(transactionRequest.getAmount());
             customerAccount.get().setBalance(newBalance);
             transaction.setBalance(newBalance);
+            transaction.setAccount(customerAccount.get());
             accountRepo.save(customerAccount.get());
             transactionRepo.save(transaction);
             return new ResponseEntity<>("Account was credited", HttpStatus.OK);
@@ -64,7 +66,7 @@ public class TransactionService {
         CustomerDetails customerDetails = new CustomerDetails();
         Optional<Account> customerAccount = accountRepo.findById(accountId);
         if(customerAccount.isEmpty()){
-            throw new ResourceNotFoundException("Account", "accountId", accountId);
+            throw new ResourceNotFoundException("Account does not exists for accountId " +accountId);
         }else{
             customerDetails.setName(customerAccount.get().getCustomer().getName());
             customerDetails.setEmail(customerAccount.get().getCustomer().getEmail());
@@ -77,7 +79,7 @@ public class TransactionService {
 
         transactionSummary.setCustomerDetails(customerDetails);
         if(transactionList.isEmpty()){
-            throw new ResourceNotFoundException("Transaction", "accountId", accountId);
+            throw new ResourceNotFoundException("Transaction does not exists for accountId " +accountId);
         }else{
             for (Transaction t: transactionList.get()){
                 TransactionResponse transactionResponse = new TransactionResponse();

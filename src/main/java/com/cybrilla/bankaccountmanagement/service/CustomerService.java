@@ -38,8 +38,12 @@ public class CustomerService {
     }
 
     public ResponseEntity<Customer> findCustomerByName(String customerName) {
-        Customer result = customerRepo.findByName(customerName).get();
-        return new ResponseEntity<>(result, HttpStatus.FOUND);
+        Optional<Customer> result = customerRepo.findByName(customerName);
+        if(result.isEmpty()){
+            throw new ResourceNotFoundException("Customer does not exists for customer name " +customerName);
+        }else {
+            return new ResponseEntity<>(result.get(), HttpStatus.FOUND);
+        }
     }
 
     public ResponseEntity<Account> addAccountForCustomer(Account account) {
@@ -47,7 +51,7 @@ public class CustomerService {
             String customerName = account.getCustomer().getName();
             Optional<Customer> customer = customerRepo.findByName(customerName);
             if(customer.isEmpty()){
-                   throw new ResourceNotFoundException("Customer", "name", customerName);
+                throw new ResourceNotFoundException("Customer does not exists for customer name " +customerName);
             }else{
                 account.setCustomer(customer.get());
                 result =  accountRepo.save(account);
@@ -58,7 +62,7 @@ public class CustomerService {
     public ResponseEntity<Account> manageCustomerStatus(long accountId, String newAccountStatus) {
         Optional<Account> account = accountRepo.findById(accountId);
         if(account.isEmpty()){
-            throw new ResourceNotFoundException("Account", "accountId", accountId);
+            throw new ResourceNotFoundException("Account does not exists for accountId " +accountId);
         }else{
             account.get().setStatus(AccountStatus.valueOf(newAccountStatus));
            return new ResponseEntity<>(accountRepo.save(account.get()), HttpStatus.CREATED) ;
@@ -68,7 +72,7 @@ public class CustomerService {
     public ResponseEntity<Account> viewCustomerAccount(long accountId) {
         Optional<Account> account = accountRepo.findById(accountId);
         if(account.isEmpty()){
-            throw new ResourceNotFoundException("Account", "accountId", accountId);
+            throw new ResourceNotFoundException("Account does not exists for accountId " +accountId);
         }else{
             return new ResponseEntity<>(account.get(), HttpStatus.FOUND) ;
         }
@@ -89,7 +93,7 @@ public class CustomerService {
         AccountType accountType1 = AccountType.valueOf(accountType);
         Optional<Account> account = accountRepo.findByCustomerIdAndAccountType(customerId, accountType1);
         if(account.isEmpty()){
-            throw new ResourceNotFoundException("Customer", "customerId", customerId);
+            throw new ResourceNotFoundException("Customer does not exists for customerId " +customerId);
         }else{
             return new ResponseEntity<>(account.get().getBalance(),HttpStatus.FOUND);
         }

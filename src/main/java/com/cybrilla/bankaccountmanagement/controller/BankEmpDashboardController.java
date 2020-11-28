@@ -20,9 +20,6 @@ public class BankEmpDashboardController {
   private CustomerService customerService;
 
 
-   // public void addNewAccount(){}
-
-
     @PostMapping(value = "/add/customer/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> addNewCustomer(@Validated  @RequestBody Customer customer){
         return customerService.addNewCustomer(customer);
@@ -34,7 +31,6 @@ public class BankEmpDashboardController {
         return customerService.addAccountForCustomer(account);
     }
 
-    public void manageCustomerAccount(){}
 
    // public void manageCustomerStatus(){}
    @PutMapping(value = "/update/account/status/{accountId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,4 +47,10 @@ public class BankEmpDashboardController {
   public ResponseEntity<List<Account>> getAccounts(){
     return customerService.getAccounts();
   }
+
+    @GetMapping(value = "/customers/{customerName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Customer> findCustomerByName(@PathVariable String customerName){
+        return customerService.findCustomerByName(customerName);
+
+    }
 }
