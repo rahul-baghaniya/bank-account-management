@@ -14,3 +14,4 @@ INSERT INTO transaction (id, amount, balance, date, description, transaction_typ
 INSERT INTO payee (id, payee_account_id, payee_name, customer_id) VALUES
         (105, 2222, 'rahul1', 1123456),
         (106, 1111, 'xyz', 1123457);
+
